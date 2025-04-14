@@ -1,0 +1,49 @@
+@startuml
+!include <C4/C4_Container>
+System_Boundary(Advertisement_App,"Advertisement App"){
+    Container(API, "API", "Heart of the system.\nContains all logic.",$tags="",$techn="Python, Litestar")
+    Container(Telegram_Bot, "Telegram Bot", "Telegram bot to provide beautiful UI",$tags="",$techn="Python, Aiogram3")
+    Container(Database, "Database", "Main API data storage",$tags="database",$techn="Postgres")
+    Container(File_Storage, "File Storage", "S3-like storage for uploaded files",$tags="database",$techn="Minio")
+    Container(Metrics_Collector, "Metrics Collector", "Collects metrics from API",$tags="",$techn="Prometheus")
+    Container(Dashboard, "Dashboard", "Dashboard to view service metrics",$tags="",$techn="Grafana")
+}
+
+System_Boundary(DuckDuckGo_AI_Provider,"DuckDuckGo AI Provider"){
+    Container_Ext(AI, "AI", "AI models",$tags="",$techn=" ")
+}
+
+Person(Advertiser, "Advertiser", "Creates and manages advertisement campaigns.\nChecks metrics of his campaigns.",$tags="")
+
+Person(Client, "Client", "Gets advertisements",$tags="")
+
+Person(Advertiser, "Advertiser", "Creates and manages advertisement campaigns.\nChecks metrics of his campaigns.",$tags="")
+
+Person(Advertiser, "Advertiser", "Creates and manages advertisement campaigns.\nChecks metrics of his campaigns.",$tags="")
+
+Rel(Advertiser, API, "","HTTP REST API")
+
+Rel(Client, API, "","HTTP REST API")
+
+Rel(API, File_Storage, "","")
+
+Rel(API, Database, "","")
+
+Rel(API, AI, "","HTTP REST API")
+
+Rel(Telegram_Bot, API, "","HTTP REST API")
+
+Rel(Telegram_Bot, File_Storage, "","")
+
+Rel(Advertiser, Telegram_Bot, "","")
+
+Rel(Metrics_Collector, API, "","")
+
+Rel(Dashboard, API, "","")
+
+Rel(Dashboard, Database, "","")
+
+Rel(Dashboard, Metrics_Collector, "","")
+
+Rel(Advertiser, Dashboard, "","")
+@enduml

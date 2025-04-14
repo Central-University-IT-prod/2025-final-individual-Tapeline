@@ -1,0 +1,17 @@
+@startuml
+!include <C4/C4_Deployment>
+Boundary(PROD_Deployment,"PROD Deployment",$descr=""){
+    Boundary(Docker_Compose,"Docker Compose",$descr=""){
+        Node(API,"API",$descr="Docker container")
+        Node(Telegram_bot,"Telegram bot",$descr="Docker container")
+        Node(Database,"Database",$descr="Docker container")
+        Node(File_Storage,"File Storage",$descr="Docker container")
+        Node(Dashboard,"Dashboard",$descr="Docker container")
+        Node(Metrics_Collector,"Metrics Collector",$descr="Docker container")
+    }
+}
+
+Boundary(AI_Deployment,"AI Deployment",$descr=""){
+    Node(AI,"AI",$descr="SaaS")
+}
+@enduml

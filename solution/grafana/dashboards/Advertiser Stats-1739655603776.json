@@ -1,0 +1,1155 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "fed57fqnvpb7kf"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 33
+              },
+              {
+                "color": "green",
+                "value": 66
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto",
+        "text": {}
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n    COALESCE(\r\n            100.0 * SUM(\r\n                    CASE WHEN fact = 'CLICK' THEN 1 ELSE 0 END\r\n            ) / NULLIF(\r\n                    1.0 * SUM(CASE WHEN fact = 'SHOW' THEN 1 ELSE 0 END), 0\r\n            ),\r\n            0\r\n) as conv\r\nFROM metrics\r\nJOIN campaigns c on c.id = metrics.campaign_id\r\nWHERE c.advertiser_id = '$adv_id'",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Conversion (total)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "fed57fqnvpb7kf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT fact, COUNT(fact) as cnt\r\nFROM metrics\r\nJOIN campaigns c on c.id = metrics.campaign_id\r\nWHERE c.advertiser_id = '$adv_id'\r\nGROUP BY fact",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Views & Clicks (total)",
+      "transformations": [
+        {
+          "id": "transpose",
+          "options": {}
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "fed57fqnvpb7kf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT SUM(cost) FROM metrics JOIN campaigns c on c.id = metrics.campaign_id\r\nWHERE c.advertiser_id = '$adv_id'",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "name": "SUM",
+                "parameters": [
+                  {
+                    "name": "cost",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [],
+            "limit": 50,
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "ba8b89b8-cdef-4012-b456-71950b4daf20",
+                  "properties": {
+                    "field": "campaign_id",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "$cmp_id"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "998b899a-0123-4456-b89a-b19509f23315",
+              "type": "group"
+            },
+            "whereString": "campaign_id = '$cmp_id'"
+          },
+          "table": "metrics"
+        }
+      ],
+      "title": "Total expense",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "fed57fqnvpb7kf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "cost"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 12,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "fed57fqnvpb7kf"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT all_dates.date,\r\n    COALESCE(\r\n        100.0 * SUM(\r\n                CASE WHEN fact = 'CLICK' THEN 1 ELSE 0 END\r\n        ) / NULLIF(\r\n                1.0 * SUM(CASE WHEN fact = 'SHOW' THEN 1 ELSE 0 END), 0\r\n        ),\r\n        0\r\n    ) as conv FROM (WITH max_date AS (\r\n        SELECT max(metrics.date) as md from metrics\r\n    )\r\n    SELECT generate_series as date\r\n    FROM generate_series(0, (SELECT * FROM max_date))\r\n) as all_dates\r\nFULL OUTER JOIN (\r\n    SELECT date, fact, campaign_id\r\n    FROM metrics\r\n    JOIN campaigns c on c.id = metrics.campaign_id\r\n    WHERE c.advertiser_id = '$adv_id'\r\n) as f_metrics ON f_metrics.date = all_dates.date\r\nGROUP BY all_dates.date\r\nORDER BY all_dates.date ASC\r\nLIMIT 50",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "date",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "SUM",
+                "parameters": [
+                  {
+                    "name": "cost",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "campaign_id",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              },
+              {
+                "property": {
+                  "name": "date",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50,
+            "orderBy": {
+              "property": {
+                "name": [
+                  "date"
+                ],
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "orderByDirection": "ASC",
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "8babb8aa-cdef-4012-b456-71950aee751e",
+                  "properties": {
+                    "field": "campaign_id",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "$cmp_id"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "998b899a-0123-4456-b89a-b19509f23315",
+              "type": "group"
+            },
+            "whereString": "campaign_id = '$cmp_id'"
+          },
+          "table": "metrics"
+        }
+      ],
+      "title": "Daily Conversion (total)",
+      "type": "trend"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "fed57fqnvpb7kf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "cost"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 8
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "date"
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "fed57fqnvpb7kf"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT all_dates.date, COUNT(fact) FROM (WITH max_date AS (\r\n        SELECT max(metrics.date) as md from metrics\r\n    )\r\n    SELECT generate_series as date\r\n    FROM generate_series(0, (SELECT * FROM max_date))\r\n) as all_dates\r\nFULL OUTER JOIN (\r\n    SELECT date, fact, campaign_id\r\n    FROM metrics\r\n    JOIN campaigns c on c.id = metrics.campaign_id\r\n    WHERE c.advertiser_id = '$adv_id' AND fact = 'SHOW'\r\n) as f_metrics ON f_metrics.date = all_dates.date\r\nGROUP BY all_dates.date\r\nORDER BY all_dates.date ASC\r\nLIMIT 50",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "date",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "COUNT",
+                "parameters": [
+                  {
+                    "name": "fact",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "campaign_id",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              },
+              {
+                "property": {
+                  "name": "date",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50,
+            "orderBy": {
+              "property": {
+                "name": [
+                  "date"
+                ],
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "orderByDirection": "ASC",
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "8babb8aa-cdef-4012-b456-71950aee751e",
+                  "properties": {
+                    "field": "campaign_id",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "$cmp_id"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                },
+                {
+                  "id": "8a8bbaa8-0123-4456-b89a-b1950af23a40",
+                  "properties": {
+                    "field": "fact",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "SHOW"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "998b899a-0123-4456-b89a-b19509f23315",
+              "type": "group"
+            },
+            "whereString": "(campaign_id = '$cmp_id' AND fact = 'SHOW')"
+          },
+          "table": "metrics"
+        }
+      ],
+      "title": "Daily Views (total)",
+      "type": "trend"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "fed57fqnvpb7kf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "cost"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "fed57fqnvpb7kf"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT all_dates.date, COUNT(fact) FROM (WITH max_date AS (\r\n        SELECT max(metrics.date) as md from metrics\r\n    )\r\n    SELECT generate_series as date\r\n    FROM generate_series(0, (SELECT * FROM max_date))\r\n) as all_dates\r\nFULL OUTER JOIN (\r\n    SELECT date, fact, campaign_id\r\n    FROM metrics\r\n    JOIN campaigns c on c.id = metrics.campaign_id\r\n    WHERE c.advertiser_id = '$adv_id' AND fact = 'CLICK'\r\n) as f_metrics ON f_metrics.date = all_dates.date\r\nGROUP BY all_dates.date\r\nORDER BY all_dates.date ASC\r\nLIMIT 50",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "date",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "COUNT",
+                "parameters": [
+                  {
+                    "name": "fact",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "campaign_id",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              },
+              {
+                "property": {
+                  "name": "date",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50,
+            "orderBy": {
+              "property": {
+                "name": [
+                  "date"
+                ],
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "orderByDirection": "ASC",
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "8babb8aa-cdef-4012-b456-71950aee751e",
+                  "properties": {
+                    "field": "campaign_id",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "$cmp_id"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                },
+                {
+                  "id": "bb888ba9-0123-4456-b89a-b1950af30270",
+                  "properties": {
+                    "field": "fact",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "CLICK"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "998b899a-0123-4456-b89a-b19509f23315",
+              "type": "group"
+            },
+            "whereString": "(campaign_id = '$cmp_id' AND fact = 'CLICK')"
+          },
+          "table": "metrics"
+        }
+      ],
+      "title": "Daily Clicks (total)",
+      "type": "trend"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "fed57fqnvpb7kf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "cost"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "fed57fqnvpb7kf"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT all_dates.date, COALESCE(SUM(cost), 0) as cost FROM (WITH max_date AS (\r\n        SELECT max(metrics.date) as md from metrics\r\n    )\r\n    SELECT generate_series as date\r\n    FROM generate_series(0, (SELECT * FROM max_date))\r\n) as all_dates\r\nFULL OUTER JOIN (\r\n    SELECT date, campaign_id, cost\r\n    FROM metrics\r\n    JOIN campaigns c on c.id = metrics.campaign_id\r\n    WHERE c.advertiser_id = '$adv_id'\r\n) as f_metrics ON f_metrics.date = all_dates.date\r\nGROUP BY all_dates.date\r\nORDER BY all_dates.date ASC\r\nLIMIT 50",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "date",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "SUM",
+                "parameters": [
+                  {
+                    "name": "cost",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "name": "campaign_id",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              },
+              {
+                "property": {
+                  "name": "date",
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50,
+            "orderBy": {
+              "property": {
+                "name": [
+                  "date"
+                ],
+                "type": "string"
+              },
+              "type": "property"
+            },
+            "orderByDirection": "ASC",
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "8babb8aa-cdef-4012-b456-71950aee751e",
+                  "properties": {
+                    "field": "campaign_id",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "$cmp_id"
+                    ],
+                    "valueError": [
+                      null
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "998b899a-0123-4456-b89a-b19509f23315",
+              "type": "group"
+            },
+            "whereString": "campaign_id = '$cmp_id'"
+          },
+          "table": "metrics"
+        }
+      ],
+      "title": "Daily Expenses (total)",
+      "type": "trend"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "value": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        "definition": "SELECT DISTINCT advertiser_id FROM campaigns\nJOIN public.metrics m on campaigns.id = m.campaign_id;",
+        "label": "Advertiser ID",
+        "name": "adv_id",
+        "options": [],
+        "query": "SELECT DISTINCT advertiser_id FROM campaigns\nJOIN public.metrics m on campaigns.id = m.campaign_id;",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "1970-01-01T00:00:00.000Z",
+    "to": "1970-01-01T00:00:00.005Z"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Advertiser Stats",
+  "uid": "eed63l67qark0e",
+  "version": 1,
+  "weekStart": ""
+}

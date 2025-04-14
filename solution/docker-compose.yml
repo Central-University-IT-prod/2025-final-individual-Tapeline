@@ -1,0 +1,147 @@
+version: "3.7"
+services:
+
+  db:
+    image: postgres:13.3
+    hostname: db
+    environment:
+      POSTGRES_DB: prodadvert_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    networks:
+      - prodadvert_main_net
+    volumes:
+      - pgdata:/var/lib/postgresql/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d account_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  api:
+    build: backend
+    hostname: api
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: prodadvert_db
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      S3_USER: ${S3_USER}
+      S3_PASS: ${S3_PASS}
+      S3_HOST: "http://minio"
+      S3_PORT: 9000
+    ports:
+      - "8080:8080"
+    expose:
+      - 8080
+    networks:
+      - prodadvert_main_net
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://REDACTED:8080/ping || exit 1
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 5
+
+
+  bot:
+    build: bot
+    environment:
+      API_BASE_URL: http://api:8080
+      S3_BASE_URL: http://minio:9000
+      BOT_TOKEN: ${BOT_TOKEN}
+    networks:
+      - prodadvert_main_net
+    depends_on:
+      api:
+        condition: service_healthy
+
+
+  minio:
+    image: minio/minio:latest
+    command: server --console-address ":9001" /data/
+    hostname: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    expose:
+      - 9000
+      - 9001
+    environment:
+      MINIO_ROOT_USER: ${S3_USER}
+      MINIO_ROOT_PASSWORD: ${S3_PASS}
+      MINIO_BROWSER_REFERRER_POLICY: "unsafe-url"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - prodadvert_main_net
+
+
+  grafana:
+    build: grafana
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - prodadvert_main_net
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "grafana-cli", "plugins", "ls" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+
+  prometheus:
+    build: prometheus
+    volumes:
+      - prometheus_data:/etc/prometheus/
+    hostname: prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+    expose:
+      - 9090
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Moscow"
+    networks:
+      - prodadvert_main_net
+
+
+
+networks:
+  prodadvert_main_net:
+    driver: bridge
+
+
+
+volumes:
+  pgdata:
+  minio_data:
+  grafana_data:
+  prometheus_data:

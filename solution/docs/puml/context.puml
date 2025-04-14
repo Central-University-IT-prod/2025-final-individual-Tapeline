@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Context>
+Person(Advertiser, "Advertiser", "Creates and manages advertisement campaigns.\nChecks metrics of his campaigns.",$tags="")
+
+Person(Client, "Client", "Gets advertisements",$tags="")
+
+System(Advertisement_App, "Advertisement App", "",$tags="")
+
+System_Ext(DuckDuckGo_AI_Provider, "DuckDuckGo AI Provider", "Provides AI models for moderation and text generation",$tags="")
+
+Rel(Advertiser, Advertisement_App, "","")
+
+Rel(Client, Advertisement_App, "","")
+
+Rel(Advertisement_App, DuckDuckGo_AI_Provider, "","")
+@enduml

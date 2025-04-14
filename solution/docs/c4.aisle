@@ -1,0 +1,99 @@
+scope project prodadvert:
+    Advertisement application
+
+This file contains C4 description of the application
+
+
+
+scope context prodadvert
+
+system Advertisement App:
+    links:
+        --> DuckDuckGo AI Provider
+
+actor Advertiser:
+    Creates and manages advertisement campaigns.
+    Checks metrics of his campaigns.
+    links:
+        --> Advertisement App
+
+actor Client:
+    Gets advertisements
+    links:
+        --> Advertisement App
+
+external system DuckDuckGo AI Provider:
+    Provides AI models for moderation and text generation
+
+
+
+scope containers prodadvert
+
+service API:
+    "Heart of the system."
+    "Contains all logic."
+    system = Advertisement App
+    tech = Python, Litestar
+    links:
+        <-- Advertiser over HTTP REST API
+        <-- Client over HTTP REST API
+        --> File Storage
+        --> Database
+        --> AI over HTTP REST API
+
+service Telegram Bot:
+    Telegram bot to provide beautiful UI
+    system = Advertisement App
+    tech = Python, Aiogram3
+    links:
+        --> API over HTTP REST API
+        --> File Storage
+        <-- Advertiser
+
+service Database [database]:
+    Main API data storage
+    system = Advertisement App
+    tech = Postgres
+
+service File Storage [database]:
+    S3-like storage for uploaded files
+    system = Advertisement App
+    tech = Minio
+
+external service AI:
+    AI models
+    system = DuckDuckGo AI Provider
+    tech = " "
+
+service Metrics Collector:
+    Collects metrics from API
+    system = Advertisement App
+    tech = Prometheus
+    links:
+        --> API
+
+service Dashboard:
+    "Dashboard to view service metrics"
+    system = Advertisement App
+    tech = Grafana
+    links:
+        --> API
+        --> Database
+        --> Metrics Collector
+        <-- Advertiser
+
+
+
+scope deployment prodadvert
+
+deployment PROD Deployment:
+    Docker Compose:
+        deploy API = Docker container
+        deploy Telegram bot = Docker container
+        deploy Database = Docker container
+        deploy File Storage = Docker container
+        deploy Dashboard = Docker container
+        deploy Metrics Collector = Docker container
+
+external deployment AI Deployment:
+    deploy AI = SaaS
